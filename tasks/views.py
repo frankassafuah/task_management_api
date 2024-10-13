@@ -7,15 +7,10 @@ from .serializers import TaskSerializer
 from django_filters.rest_framework import DjangoFilterBackend
 
 
-# class UserViewSet(viewsets.ModelViewSet):
-#     queryset = CustomUser.objects.all()
-#     serializer_class = UserSerializer
-
-
 class TaskViewSet(viewsets.ModelViewSet):
     queryset = Task.objects.all()
     serializer_class = TaskSerializer
-    permission_classes = [IsAuthenticated]
+    permission_classes = [IsAuthenticated]  # Ensure user is authenticated
     filter_backends = [DjangoFilterBackend]
     filterset_fields = ["status", "priority", "due_date"]
 
@@ -24,7 +19,7 @@ class TaskViewSet(viewsets.ModelViewSet):
         return self.request.user.tasks.all()
 
     def perform_create(self, serializer):
-        serializer.save(user=self.request.user)
+        serializer.save(user=self.request.user)  # Automatically assign the logged-in user as the task owner
 
     @action(detail=True, methods=["post"])
     def mark_complete(self, request, pk=None):
